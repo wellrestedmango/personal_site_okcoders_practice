@@ -8,6 +8,11 @@ let cart = [];
 let cartList = document.getElementById('cart-items');
 let liElement = document.createElement('li');
 let totalElement = document.getElementById('total');
+let total = 0;
+let discountMessage = document.getElementById('discount');
+let promoCodeElement = document.getElementById("promo");
+let promoCode = "";
+
 
 
 function handleLogin(event) {
@@ -37,6 +42,8 @@ function handleLogin(event) {
     welcomeMessage.innerText = `Welcome ${loggedInUser.username}`;
 }
 
+
+
 function addToCart(item, price){
     if (cart.length === 0){
         const itemToInsert = {
@@ -63,14 +70,15 @@ function addToCart(item, price){
            cart.push(itemToInsert);
        }
     }
-    clearCartView();
     printCart();
 }
 
-function printCart(){
-    let total = 0;
-    let itemTotal = 0;
 
+
+function printCart(){
+    clearCartView();
+    let itemTotal = 0;
+    total = 0;
     for (let i in cart){
         itemTotal = cart[i].price * cart[i].quantity;
         total += itemTotal;
@@ -78,26 +86,35 @@ function printCart(){
         Quantity: ${cart[i].quantity}
         <button onclick = "decrementItem('${cart[i].item}')" id= "decrement">-</button>
         <button onclick = "incrementItem('${cart[i].item}')" id ="increment">+</button>
+        <button onclick = "removeItem('${cart[i].item}')" id ="remove">Remove</button>
         <br>
         Price: $${itemTotal.toFixed(2)} `;
-        cartList.appendChild(liElement.cloneNode(true));
+
+        if (cart[i].quantity > 0){
+            cartList.appendChild(liElement.cloneNode(true));
+        }
     }
-    totalElement.innerText = total.toFixed(2);
+    promoCode = promoCodeElement.value;
+    totalElement.innerText = getTotalWithDiscount(promoCode);
 }
+
+
 
 function clearCartView(){
     cartList.innerHTML = '';
     return
 }
 
+
+
 function clearCart(){
     cart = [];
-    clearCartView();
     printCart();
 }
 
+
+
 function decrementItem(item) {
-    console.log("made it")
     for (let i in cart){
         if (cart[i].item == item){
             if (cart[i].quantity > 0){
@@ -107,17 +124,58 @@ function decrementItem(item) {
             }
         }
     }
-    clearCartView();
     printCart();
 }
 
+
+
 function incrementItem(item) {
-    console.log("made it")
     for (let i in cart){
         if (cart[i].item == item){
             cart[i].quantity++;
         }
     }
-    clearCartView();
     printCart();
+}
+
+
+
+function removeItem(item){
+    for (let i in cart){
+        if (cart[i].item == item){
+            cart.splice(i,1);
+        }
+    }
+    printCart();
+}
+
+
+
+function getTotalWithDiscount(promoCode = ""){
+    let discountValue = 0;
+    switch (promoCode){
+        case "test5":
+            discountValue = 5;
+            break;
+        case "test10":
+            discountValue = 10;
+            break;
+        case "test15":
+            discountValue = 15;
+            break;
+        default:
+            discountMessage.innerText = "Invalid code"
+            break;
+    }
+
+    if (discountValue > 0){
+        if (total >= discountValue){
+            total -= discountValue;
+            discountMessage.innerText = `You got $${discountValue} off`
+        } else {
+            total = 0;
+            discountMessage.innerText = `You got $${discountValue} off`
+        }
+    }
+    return total.toFixed(2);
 }
