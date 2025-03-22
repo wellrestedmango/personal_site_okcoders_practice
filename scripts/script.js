@@ -11,6 +11,7 @@ let totalElement = document.getElementById('total');
 let total = 0;
 let discountMessage = document.getElementById('discount');
 let promoCodeElement = document.getElementById("promo");
+promoCodeElement.value = "";
 let promoCode = "";
 
 
@@ -94,7 +95,10 @@ function printCart(){
             cartList.appendChild(liElement.cloneNode(true));
         }
     }
-    promoCode = promoCodeElement.value;
+    if (promoCodeElement.value != ""){
+        promoCode = promoCodeElement.value;
+    }
+    promoCodeElement.value = "";
     totalElement.innerText = getTotalWithDiscount(promoCode);
 }
 
@@ -164,17 +168,17 @@ function getTotalWithDiscount(promoCode = ""){
             discountValue = 15;
             break;
         default:
-            discountMessage.innerText = "Invalid code"
+            discountMessage.innerText = ""
             break;
     }
 
     if (discountValue > 0){
         if (total >= discountValue){
             total -= discountValue;
-            discountMessage.innerText = `You got $${discountValue} off`
+            discountMessage.innerText = `You used code ${promoCode} for $${discountValue} off`
         } else {
             total = 0;
-            discountMessage.innerText = `You got $${discountValue} off`
+            discountMessage.innerText = `You used code ${promoCode} for $${discountValue} off`
         }
     }
     return total.toFixed(2);
