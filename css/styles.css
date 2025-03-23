@@ -163,3 +163,7 @@ button:hover {
     font-weight: bold;
 
 }
+
+#site-title{
+    font-family: monospace;
+}
