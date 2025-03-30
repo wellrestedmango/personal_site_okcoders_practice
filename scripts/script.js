@@ -168,7 +168,7 @@ function getTotalWithDiscount(promoCode = ""){
             discountValue = 15;
             break;
         default:
-            discountMessage.innerText = ""
+            discountMessage.innerText = "";
             break;
     }
 
@@ -182,4 +182,24 @@ function getTotalWithDiscount(promoCode = ""){
         }
     }
     return total.toFixed(2);
+}
+
+
+document.addEventListener("DOMContentLoaded", function(){
+    getUserLocation();
+});
+
+function getUserLocation(){
+    if (navigator.geolocation){
+        console.log("made it into the if statement")
+        navigator.geolocation.getCurrentPosition(
+            function(position){
+                let userLattitude = position.coords.latitude;
+                let userLongitude = position.coords.longitude;
+                console.log(userLattitude,userLongitude);
+            }, function (error){
+                console.log("error getting position", error);
+            }
+        );
+    }
 }
