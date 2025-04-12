@@ -189,17 +189,4 @@ document.addEventListener("DOMContentLoaded", function(){
     getUserLocation();
 });
 
-function getUserLocation(){
-    if (navigator.geolocation){
-        console.log("made it into the if statement")
-        navigator.geolocation.getCurrentPosition(
-            function(position){
-                let userLattitude = position.coords.latitude;
-                let userLongitude = position.coords.longitude;
-                console.log(userLattitude,userLongitude);
-            }, function (error){
-                console.log("error getting position", error);
-            }
-        );
-    }
-}
+
