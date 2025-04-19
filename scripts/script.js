@@ -180,56 +180,21 @@ function removeItem(item){
     printCart();
 }
 
-//this is totally broken - find out why you are getting an object back OR move all of it to server side
-// async function getTotalWithDiscount(providedCode = ""){
+async function getDiscountFromServer(){
+    promoCode = promoCodeElement.value
 
-//     if(providedCode == ""){
-//         return total.toFixed(2);
-//     }
 
-//     const response = await fetch("http://127.0.0.1:3000/getDiscount")
-//     if (!response.ok){
-//         console.error("invalid response ");
-//         return
-//     }
-//     let activeCodes = await response.json();
- 
-//     let discountValue = 0;
-//     let pOrD = "";
-//     let activeCodeNames = [];
-
-//     for (let i = 0; i < activeCodes.length; i++){
-//         activeCodeNames.push(activeCodes[i].name);
-//     }
-
-//     if (activeCodeNames.includes(providedCode)){
-//         for (let y=0; y < activeCodes.length; y++){
-//             if(activeCodes[y].name == providedCode){
-//                 discountValue = activeCodes[y].amount;
-//                 pOrD = activeCodes[y].type;
-//             }
-//         }
-//     }
-
-//     console.log(pOrD);
-//     console.log(discountValue);
-
-    
-//     if (pOrD == 'percent'){
-//         discountMessage.innerText - `You used code ${providedCode} for ${discountValue}% off`
-//         discountValue = discountValue/100;
-//         discountValue.toFixed(2);
-//     }
-//     if (total >= discountValue){
-//         total -= discountValue;
-//         discountMessage.innerText = `You used code ${providedCode} for ${discountValue} off`
-//     } else {
-//         total = 0;
-//         discountMessage.innerText = `You used code ${providedCode} for ${discountValue} off`
-//     }
-
-//     return total.toFixed(2);
-// }
+    const response = await fetch('http://127.0.0.1:3000/getDiscount', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            promoCode: promoCode,
+            currTotal: total
+        })
+    });
+}
 
 
 

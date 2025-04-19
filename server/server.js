@@ -40,9 +40,12 @@ app.get('/getMenu', (req, res) => {
     res.json(menu);
 });
 
-app.get('/getDiscount', (req,res) => {
-    console.log("Made it to '/getDiscount'")
-    res.json(discountCodes);
+app.post('/getDiscount', (req,res) => {
+    console.log("Made it to '/getDiscount'");
+    console.log(req.body);
+
+    //take this tuple and get the code and current total value from it
+    //compare those values to the promocodes here then return the discount
 });
 
 app.post('/login', (req,res) => {
