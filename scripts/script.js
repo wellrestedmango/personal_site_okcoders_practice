@@ -1,7 +1,3 @@
-const user = {
-    username: 'admin',
-    password: 'password123'
-}
 
 let loggedInUser = null;
 let cart = [];
@@ -16,13 +12,24 @@ let promoCode = "";
 
 
 
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
     const usernameElement = document.getElementById('username');
     const passedName = usernameElement.value;
     const passwordElement = document.getElementById('password');
     const passedPass = passwordElement.value;
 
+
+    const response = await fetch('http://127.0.0.1:3000/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: passedName,
+            password: passedPass
+        })
+    });
 
     if (passedName !== user.username || passedPass !== user.password){
         alert('Login is incorrect')
@@ -44,16 +51,8 @@ function handleLogin(event) {
 }
 
 
-const menu = [
-    {name: 'Americano', price: 2.5, type: 'hot'},
-    {name: 'Latte', price: 3.0, type: 'hot'},
-    {name: 'Cappuccino', price: 3.5, type: 'hot'},
-    {name: 'Frozen Americano', price: 4.5, type: 'cold'},
-    {name: 'Frozen Latte', price: 2.5, type: 'cold'},
-    {name: 'Pup Cup', price: 0, type: 'cold'},
-];
 
-function createMenu(){
+function createMenu(menu){
     let ulElement = document.getElementById("menu");
     ulElement.style.listStyleType = 'none';
     if(menu && menu.length > 0){
@@ -69,7 +68,6 @@ function createMenu(){
         }
     }
 }
-
 
 
 
@@ -103,7 +101,7 @@ function addToCart(item, price){
 }
 
 
-
+//right now the discount stuff is broken
 function printCart(){
     clearCartView();
     let itemTotal = 0;
@@ -123,11 +121,12 @@ function printCart(){
             cartList.appendChild(liElement.cloneNode(true));
         }
     }
-    if (promoCodeElement.value != ""){
-        promoCode = promoCodeElement.value;
-    }
-    promoCodeElement.value = "";
-    totalElement.innerText = getTotalWithDiscount(promoCode);
+    // if (promoCodeElement.value != ""){
+    //     promoCode = promoCodeElement.value;
+    // }
+    // promoCodeElement.value = "";
+    // totalElement.innerText = getTotalWithDiscount(promoCode);
+    totalElement.innerText = total;
 }
 
 
@@ -181,48 +180,75 @@ function removeItem(item){
     printCart();
 }
 
+//this is totally broken - find out why you are getting an object back OR move all of it to server side
+// async function getTotalWithDiscount(providedCode = ""){
 
-//change this section - have discounts be an array then we can loop through it to check rather than doing a test case and having to change code to make a new promo
-//you can have an admin view at that point that allows them to add a new code and that can insert the promo into the array easily
-//then you can display all active promos and remove and add at will 
-function getTotalWithDiscount(promoCode = ""){
-    let discountValue = 0;
-    switch (promoCode){
-        case "test5":
-            discountValue = 5;
-            break;
-        case "test10":
-            discountValue = 10;
-            break;
-        case "test15":
-            discountValue = 15;
-            break;
-        default:
-            discountMessage.innerText = "";
-            break;
+//     if(providedCode == ""){
+//         return total.toFixed(2);
+//     }
+
+//     const response = await fetch("http://127.0.0.1:3000/getDiscount")
+//     if (!response.ok){
+//         console.error("invalid response ");
+//         return
+//     }
+//     let activeCodes = await response.json();
+ 
+//     let discountValue = 0;
+//     let pOrD = "";
+//     let activeCodeNames = [];
+
+//     for (let i = 0; i < activeCodes.length; i++){
+//         activeCodeNames.push(activeCodes[i].name);
+//     }
+
+//     if (activeCodeNames.includes(providedCode)){
+//         for (let y=0; y < activeCodes.length; y++){
+//             if(activeCodes[y].name == providedCode){
+//                 discountValue = activeCodes[y].amount;
+//                 pOrD = activeCodes[y].type;
+//             }
+//         }
+//     }
+
+//     console.log(pOrD);
+//     console.log(discountValue);
+
+    
+//     if (pOrD == 'percent'){
+//         discountMessage.innerText - `You used code ${providedCode} for ${discountValue}% off`
+//         discountValue = discountValue/100;
+//         discountValue.toFixed(2);
+//     }
+//     if (total >= discountValue){
+//         total -= discountValue;
+//         discountMessage.innerText = `You used code ${providedCode} for ${discountValue} off`
+//     } else {
+//         total = 0;
+//         discountMessage.innerText = `You used code ${providedCode} for ${discountValue} off`
+//     }
+
+//     return total.toFixed(2);
+// }
+
+
+
+async function getMenuFromServer(){
+    const response = await fetch("http://127.0.0.1:3000/getMenu");
+    
+    if (!response.ok){
+        console.error("invalid response ");
+        return
     }
 
-    if (discountValue > 0){
-        if (total >= discountValue){
-            total -= discountValue;
-            discountMessage.innerText = `You used code ${promoCode} for $${discountValue} off`
-        } else {
-            total = 0;
-            discountMessage.innerText = `You used code ${promoCode} for $${discountValue} off`
-        }
-    }
-    return total.toFixed(2);
+    let data = await response.json();
+    createMenu(data);
 }
 
 
-async function practiceGetRoute(){
-    console.log("Made it to get route practice function");
-    const response = await fetch("http://127.0.0.1:3000/");
-    console.log(response);
-}
 
 document.addEventListener("DOMContentLoaded", function(){
-    practiceGetRoute();
+    getMenuFromServer();
     createMenu();
 });
 
