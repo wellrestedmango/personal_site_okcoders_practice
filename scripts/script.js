@@ -185,8 +185,5 @@ function getTotalWithDiscount(promoCode = ""){
 }
 
 
-document.addEventListener("DOMContentLoaded", function(){
-    getUserLocation();
-});
 
 
