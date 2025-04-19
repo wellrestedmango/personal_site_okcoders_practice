@@ -44,6 +44,34 @@ function handleLogin(event) {
 }
 
 
+const menu = [
+    {name: 'Americano', price: 2.5, type: 'hot'},
+    {name: 'Latte', price: 3.0, type: 'hot'},
+    {name: 'Cappuccino', price: 3.5, type: 'hot'},
+    {name: 'Frozen Americano', price: 4.5, type: 'cold'},
+    {name: 'Frozen Latte', price: 2.5, type: 'cold'},
+    {name: 'Pup Cup', price: 0, type: 'cold'},
+];
+
+function createMenu(){
+    let ulElement = document.getElementById("menu");
+    ulElement.style.listStyleType = 'none';
+    if(menu && menu.length > 0){
+        for (let i = 0; i < menu.length; i++) {
+            const liElement = document.createElement('li')
+            liElement.innerHTML = `
+            <div class="menu-item">
+            <span id="${menu[i].name}">${menu[i].name}</span>
+            <button onclick="addToCart('${menu[i].name}', '${menu[i].price}')">Add To Cart ($${menu[i].price})</button>
+            </div>
+         `;
+         ulElement.appendChild(liElement);
+        }
+    }
+}
+
+
+
 
 function addToCart(item, price){
     if (cart.length === 0){
@@ -154,7 +182,9 @@ function removeItem(item){
 }
 
 
-
+//change this section - have discounts be an array then we can loop through it to check rather than doing a test case and having to change code to make a new promo
+//you can have an admin view at that point that allows them to add a new code and that can insert the promo into the array easily
+//then you can display all active promos and remove and add at will 
 function getTotalWithDiscount(promoCode = ""){
     let discountValue = 0;
     switch (promoCode){
@@ -184,6 +214,17 @@ function getTotalWithDiscount(promoCode = ""){
     return total.toFixed(2);
 }
 
+
+async function practiceGetRoute(){
+    console.log("Made it to get route practice function");
+    const response = await fetch("http://127.0.0.1:3000/");
+    console.log(response);
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+    practiceGetRoute();
+    createMenu();
+});
 
 
 
