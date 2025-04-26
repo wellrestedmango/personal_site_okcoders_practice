@@ -180,6 +180,8 @@ function removeItem(item){
     printCart();
 }
 
+
+//finally have the right amount coming back
 async function getDiscountFromServer(oldTotal = 50){
     promoCode = promoCodeElement.value
 
