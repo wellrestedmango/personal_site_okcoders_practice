@@ -12,7 +12,7 @@
       <h1 id="site-title">This is Eric's site</h1>
       <form id="login-form" onsubmit="handleLogin(event)">
         <input id="username" placeholder="Username" type="text" required />
-        <input id="password" placeholder="Password" type="text" required />
+        <input id="password" placeholder="Password" type="password" required />
         <button type="submit">Log On</button>
         <span id="welcome-message"></span>
       </form>
@@ -34,6 +34,29 @@
       <button onclick="getDiscountFromServer()">Check</button>
       <p><span id="discount"></span></p>
   </section>
+  <footer>
+    <section>
+      <h2>Contact Form</h2>
+      <form id="contact-form" onsubmit="contact(event)">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input id="name" placeholder="Name" type="text" required />
+        
+          <label for="email">Email</label>
+          <input id = "email" placeholder="email" type="email" required />
+    
+          <label for="phone">Phone</label>
+          <input id= "phone" placeholder="phone number" type="text" />
+        
+          <label for="form-notes">Comments</label>
+          <textarea class="form-control" id="form-notes" required></textarea>
+
+          <button type="submit">Submit</button>
+          <span id="contact-message"></span>
+        </div>
+      </form>
+    </section>
+  </footer>
   </main>
 </body>
 <script src="scripts/script.js"></script>

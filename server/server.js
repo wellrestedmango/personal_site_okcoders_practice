@@ -22,7 +22,7 @@ const discountCodes = [
     {name:"save10d", type:"dollar", amount:"10"},
     {name:"save10p", type:"percent", amount:"10"},
     {name:"save20d", type:"dollar", amount:"20"},
-    {name:"save20p", tpye:"percent", amount:"20"}
+    {name:"save20p", type:"percent", amount:"20"}
 ]
 
 const user = {username: 'admin', password: 'password123'}
@@ -41,8 +41,41 @@ app.get('/getMenu', (req, res) => {
 });
 
 app.post('/getDiscount', (req,res) => {
-    console.log("Made it to '/getDiscount'");
-    console.log(req.body);
+    console.log("Made it to '/getDiscount'", req.body);
+    const discount = req.body;
+    let total = 0;
+
+    let discountAmount = 0;
+    let discountType = "";
+
+    for (let i = 0; i < discountCodes.length; i++){
+        if (discount.promoCode == discountCodes[i].name){
+            discountAmount = discountCodes[i].amount;
+            discountType = discountCodes[i].type;
+        }
+    }
+
+
+    if (discountType == "percent"){
+        if (discount.currTotal == 0){
+            res.json({total:0});
+        }else {
+            total = discount.currTotal - (discount.currTotal * (discountAmount/100));
+            total.toFixed(2);
+            res.json({total:total})
+        }
+    }
+
+    if (discountType == "dollar"){
+        if (discount.currTotal - discountAmount <= 0){
+            res.json({total:0})
+        }else{
+            total = discount.currTotal - discountAmount;
+            console.log("dollar total", total)
+            res.json({total:total})
+        }
+    }
+    
 
     //take this tuple and get the code and current total value from it
     //compare those values to the promocodes here then return the discount
@@ -50,8 +83,43 @@ app.post('/getDiscount', (req,res) => {
 
 app.post('/login', (req,res) => {
     console.log("Made it to '/login'", req.body)
+
+    const {username, password} = req.body;
+
+    if (username != user.username || password != user.password){
+        res.status(401).json({message: "Incorrect Username or Password"})
+    }else{
+        res.status(200).json({message: `Welcome ${username}`})
+    }
 });
 
+const orderArray = []
+app.post('/checkout', (req,res) => {
+    console.log("Made it to '/checkout'", req.body)
+
+    if(!req.body || req.body < 1){
+        res.status(400).json({message: "Order is empty"})
+    }
+
+    const order = req.body;
+    orderArray.push(order);
+    res.status(200).json({message: "Order Confirmed"})
+
+});
+
+
+const comments = []
+app.post('/comment', (req,res) => {
+    console.log("Made it to '/comment'", req.body)
+
+    if(!req.body || req.body.length < 1){
+        res.status(400).json({message: "Error handling order form"})
+    }
+
+    const comment = req.body;
+    comments.push(comment);
+    res.status(200).json({message: "Comment received!"})
+});
 
 
 app.listen(port, () => {

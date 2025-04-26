@@ -31,23 +31,20 @@ async function handleLogin(event) {
         })
     });
 
-    if (passedName !== user.username || passedPass !== user.password){
-        alert('Login is incorrect')
-        loggedInUser = null;
-        usernameElement.value = null;
-        passwordElement.value = null;
-        return
-    }
-    else{
-        loggedInUser = user;
-        usernameElement.value = null;
-        passwordElement.value = null;
-        //this only works because we just have the one user for this example
-        //otherwise you would probably assign it to a user ID after checking
-    }
-
+    let message = await response.json();
+    
     let welcomeMessage = document.getElementById('welcome-message');
-    welcomeMessage.innerText = `Welcome ${loggedInUser.username}`;
+
+    if (!response.ok){
+        alert("Incorrect Username or Password")
+        welcomeMessage.innerText = "";
+        usernameElement.value = "";
+        passwordElement.value = "";
+    }else{
+        welcomeMessage.innerText = message.message;
+        usernameElement.value = "";
+        passwordElement.value = "";
+    }
 }
 
 
@@ -121,6 +118,9 @@ function printCart(){
             cartList.appendChild(liElement.cloneNode(true));
         }
     }
+
+    let discountedTotal = getDiscountFromServer(total);
+    console.log(discountedTotal);
     // if (promoCodeElement.value != ""){
     //     promoCode = promoCodeElement.value;
     // }
@@ -180,7 +180,7 @@ function removeItem(item){
     printCart();
 }
 
-async function getDiscountFromServer(){
+async function getDiscountFromServer(oldTotal = 50){
     promoCode = promoCodeElement.value
 
 
@@ -191,9 +191,15 @@ async function getDiscountFromServer(){
         },
         body: JSON.stringify({
             promoCode: promoCode,
-            currTotal: total
+            currTotal: oldTotal
         })
     });
+
+    let newTotal = await response.json();
+
+    console.log(newTotal.total);
+    
+    return newTotal.total;
 }
 
 
@@ -210,6 +216,77 @@ async function getMenuFromServer(){
     createMenu(data);
 }
 
+async function checkout(){
+    if (cart.length === 0){
+        alert('Your cart is empty!');
+        return;
+    }
+    //post the cart array to server to be stored in orderArray
+    const response = await fetch('http://127.0.0.1:3000/checkout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cart)
+    });
+
+    let responseMessage = await response.json();
+
+    if (!response.ok){
+        alert(responseMessage.message);
+        return; 
+    }
+
+    alert(`${responseMessage.message} Thank you!`)
+
+
+    cart.length = 0;
+    printCart();
+}
+
+
+async function contact(event){
+    event.preventDefault();
+
+    const nameElement = document.getElementById("name");
+    const name = nameElement.value;
+
+    const emailElement = document.getElementById("email");
+    const email = emailElement.value;
+
+    const phoneElement = document.getElementById("phone");
+    const phone = phoneElement.value;
+
+    const commentElement = document.getElementById("form-notes");
+    const comment = commentElement.value;
+    
+    const response = await fetch('http://127.0.0.1:3000/comment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: name,
+            email: email,
+            phone: phone,
+            comment: comment
+        })
+    });
+
+    let responseMessage = await response.json();
+
+    if (!response.ok){
+        alert(responseMessage.message);
+        return; 
+    }
+
+    alert(`${responseMessage.message} Thank you!`);
+
+    nameElement.value = "";
+    emailElement.value = "";
+    phoneElement.value = "";
+    commentElement.value = "";
+}
 
 
 document.addEventListener("DOMContentLoaded", function(){

@@ -27,6 +27,17 @@ header {
     text-align: center;
 
 }
+footer {
+
+    background-color: #6f4e37;
+
+    color: white;
+
+    padding: 1rem;
+
+    text-align: center;
+
+}
 
 #login-section {
 
@@ -35,7 +46,10 @@ header {
 }
 
 #username,
-
+#name,
+#email,
+#phone,
+#form-notes,
 #password {
 
     padding: 8px;
