@@ -135,7 +135,7 @@ app.post('/comment', async (req,res) => {
     }
 
     const comment = req.body;
-    
+
     const {data, error} = await supabase
     .from('contact_form_messages')
     .insert([
