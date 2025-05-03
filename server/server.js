@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
+const supabase = require('./db')
 const app = express();
 const port = 3000;
 
@@ -24,8 +26,6 @@ const discountCodes = [
     {name:"save20d", type:"dollar", amount:"20"},
     {name:"save20p", type:"percent", amount:"20"}
 ]
-
-const user = {username: 'admin', password: 'password123'}
 
 
 
@@ -92,16 +92,21 @@ app.post('/getDiscount', (req,res) => {
 });
 
 
-app.post('/login', (req,res) => {
+app.post('/login', async (req,res) => {
     console.log("Made it to '/login'", req.body)
 
     const {username, password} = req.body;
 
-    if (username != user.username || password != user.password){
-        res.status(401).json({message: "Incorrect Username or Password"})
-    }else{
-        res.status(200).json({message: `Welcome ${username}`})
+    const {data, error} = await supabase.auth.signInWithPassword({
+        email: username,
+        password: password
+    });
+    
+    if (error){
+        return res.status(401).json({message:"Invalid Credentials"});
     }
+
+    res.status(200).json({message:`Welcome ${username}!`});
 });
 
 
