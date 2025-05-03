@@ -1,4 +1,3 @@
-
 let loggedInUser = null;
 let cart = [];
 let cartList = document.getElementById('cart-items');
@@ -8,8 +7,6 @@ let total = 0;
 let discountMessage = document.getElementById('discount');
 let promoCodeElement = document.getElementById("promo");
 promoCodeElement.value = "";
-let promoCode = "";
-
 
 
 async function handleLogin(event) {
@@ -171,7 +168,7 @@ function removeItem(item){
 
 
 async function getDiscountFromServer(oldTotal = total){
-    promoCode = promoCodeElement.value
+    let promoCode = promoCodeElement.value
 
     if (promoCode == ""){
         return {

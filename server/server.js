@@ -5,11 +5,10 @@ const supabase = require('./db')
 const app = express();
 const port = 3000;
 
+
 app.use(cors()); //for aprsing cross origin request 
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-
-
 
 
 const discountCodes = [
@@ -126,12 +125,11 @@ app.post('/checkout', (req,res) => {
 });
 
 
-
 app.post('/comment', async (req,res) => {
     console.log("Made it to '/comment'", req.body)
 
     if(!req.body || req.body.length < 1){
-        res.status(400).json({message: "Error handling order form"})
+        res.status(400).json({message: "Error handling contact form. Please make sure all fields are complete"})
     }
 
     const comment = req.body;
