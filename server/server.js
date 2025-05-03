@@ -40,11 +40,12 @@ app.get('/getMenu', (req, res) => {
     res.json(menu);
 });
 
+
 app.post('/getDiscount', (req,res) => {
     console.log("Made it to '/getDiscount'", req.body);
     const discount = req.body;
     let total = 0;
-
+    let codeInArray = false;
     let discountAmount = 0;
     let discountType = "";
 
@@ -52,7 +53,15 @@ app.post('/getDiscount', (req,res) => {
         if (discount.promoCode == discountCodes[i].name){
             discountAmount = discountCodes[i].amount;
             discountType = discountCodes[i].type;
+            codeInArray = true;
         }
+    }
+
+    if(codeInArray == false){
+        res.json({
+            total:discount.currTotal,
+            message: "Invalid discount code"
+        });
     }
 
 
@@ -62,7 +71,10 @@ app.post('/getDiscount', (req,res) => {
         }else {
             total = discount.currTotal - (discount.currTotal * (discountAmount/100));
             total.toFixed(2);
-            res.json({total:total})
+            res.json({
+                total:total,
+                message: `You saved ${discountAmount} percent!`
+            })
         }
     }
 
@@ -71,15 +83,14 @@ app.post('/getDiscount', (req,res) => {
             res.json({total:0})
         }else{
             total = discount.currTotal - discountAmount;
-            console.log("dollar total", total)
-            res.json({total:total})
+            res.json({
+                total:total,
+                message: `You saved ${discountAmount} dollars`
+            });
         }
     }
-    
-
-    //take this tuple and get the code and current total value from it
-    //compare those values to the promocodes here then return the discount
 });
+
 
 app.post('/login', (req,res) => {
     console.log("Made it to '/login'", req.body)
@@ -92,6 +103,7 @@ app.post('/login', (req,res) => {
         res.status(200).json({message: `Welcome ${username}`})
     }
 });
+
 
 const orderArray = []
 app.post('/checkout', (req,res) => {

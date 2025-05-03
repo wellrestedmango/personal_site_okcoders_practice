@@ -48,7 +48,6 @@ async function handleLogin(event) {
 }
 
 
-
 function createMenu(menu){
     let ulElement = document.getElementById("menu");
     ulElement.style.listStyleType = 'none';
@@ -65,7 +64,6 @@ function createMenu(menu){
         }
     }
 }
-
 
 
 function addToCart(item, price){
@@ -98,8 +96,7 @@ function addToCart(item, price){
 }
 
 
-//right now the discount stuff is broken
-function printCart(){
+async function printCart(){
     clearCartView();
     let itemTotal = 0;
     total = 0;
@@ -119,16 +116,12 @@ function printCart(){
         }
     }
 
-    let discountedTotal = getDiscountFromServer(total);
-    console.log(discountedTotal);
-    // if (promoCodeElement.value != ""){
-    //     promoCode = promoCodeElement.value;
-    // }
-    // promoCodeElement.value = "";
-    // totalElement.innerText = getTotalWithDiscount(promoCode);
-    totalElement.innerText = total;
-}
+    let discountedTotal = await getDiscountFromServer(total);
+    let discountMessageElement = document.getElementById("discountMessage");
 
+    discountMessageElement.innerText = discountedTotal.message;
+    totalElement.innerText = discountedTotal.total;
+}
 
 
 function clearCartView(){
@@ -137,12 +130,10 @@ function clearCartView(){
 }
 
 
-
 function clearCart(){
     cart = [];
     printCart();
 }
-
 
 
 function decrementItem(item) {
@@ -159,7 +150,6 @@ function decrementItem(item) {
 }
 
 
-
 function incrementItem(item) {
     for (let i in cart){
         if (cart[i].item == item){
@@ -168,7 +158,6 @@ function incrementItem(item) {
     }
     printCart();
 }
-
 
 
 function removeItem(item){
@@ -181,10 +170,15 @@ function removeItem(item){
 }
 
 
-//finally have the right amount coming back
-async function getDiscountFromServer(oldTotal = 50){
+async function getDiscountFromServer(oldTotal = total){
     promoCode = promoCodeElement.value
 
+    if (promoCode == ""){
+        return {
+            total: oldTotal,
+            message: ""
+        };
+    }
 
     const response = await fetch('http://127.0.0.1:3000/getDiscount', {
         method: 'POST',
@@ -199,11 +193,8 @@ async function getDiscountFromServer(oldTotal = 50){
 
     let newTotal = await response.json();
 
-    console.log(newTotal.total);
-    
-    return newTotal.total;
+    return newTotal;
 }
-
 
 
 async function getMenuFromServer(){
@@ -217,6 +208,7 @@ async function getMenuFromServer(){
     let data = await response.json();
     createMenu(data);
 }
+
 
 async function checkout(){
     if (cart.length === 0){
