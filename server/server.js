@@ -10,15 +10,7 @@ app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 
-//cart
-const menu = [
-    {name: 'Americano', price: 2.5, type: 'hot'},
-    {name: 'Latte', price: 3.0, type: 'hot'},
-    {name: 'Cappuccino', price: 3.5, type: 'hot'},
-    {name: 'Frozen Americano', price: 4.5, type: 'cold'},
-    {name: 'Frozen Latte', price: 2.5, type: 'cold'},
-    {name: 'Pup Cup', price: 0, type: 'cold'},
-];
+
 
 const discountCodes = [
     {name:"save10d", type:"dollar", amount:"10"},
@@ -28,16 +20,25 @@ const discountCodes = [
 ]
 
 
-
 app.get('/', (req, res) => {
     console.log('made it to "/"');
     res.send('Hello, world!');
 });
 
 
-app.get('/getMenu', (req, res) => {
+app.get('/getMenu', async (req, res) => {
     console.log("Made it '/getMenu'");
-    res.json(menu);
+
+    //get data back and call it menu. select from menu column
+    const {data: menu, error} = await supabase
+    .from('menu')
+    .select()
+
+    if (error){
+        return res.status(500).json({error: error.message});
+    }
+
+    res.json(menu)
 });
 
 
@@ -125,8 +126,8 @@ app.post('/checkout', (req,res) => {
 });
 
 
-const comments = []
-app.post('/comment', (req,res) => {
+
+app.post('/comment', async (req,res) => {
     console.log("Made it to '/comment'", req.body)
 
     if(!req.body || req.body.length < 1){
@@ -134,8 +135,23 @@ app.post('/comment', (req,res) => {
     }
 
     const comment = req.body;
-    comments.push(comment);
-    res.status(200).json({message: "Comment received!"})
+    
+    const {data, error} = await supabase
+    .from('contact_form_messages')
+    .insert([
+        {
+            first_name: comment.first_name,
+            last_name: comment.last_name,
+            email: comment.email,
+            comment: comment.message
+        }
+    ])
+
+    if (error){
+        res.status(500).json({message: "Error saving comment. Please try again later"})
+    }
+
+    res.status(200).json({message: "Comment saved successfully."})
 });
 
 

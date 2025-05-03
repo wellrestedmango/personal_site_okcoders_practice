@@ -242,14 +242,14 @@ async function checkout(){
 async function contact(event){
     event.preventDefault();
 
-    const nameElement = document.getElementById("name");
-    const name = nameElement.value;
+    const firstNameElement = document.getElementById("first_name");
+    const firstName = firstNameElement.value;
+
+    const lastNameElement = document.getElementById("last_name");
+    const lastName = lastNameElement.value;
 
     const emailElement = document.getElementById("email");
     const email = emailElement.value;
-
-    const phoneElement = document.getElementById("phone");
-    const phone = phoneElement.value;
 
     const commentElement = document.getElementById("form-notes");
     const comment = commentElement.value;
@@ -260,9 +260,9 @@ async function contact(event){
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            name: name,
+            first_name: firstName,
             email: email,
-            phone: phone,
+            last_name: lastName,
             comment: comment
         })
     });
@@ -276,9 +276,9 @@ async function contact(event){
 
     alert(`${responseMessage.message} Thank you!`);
 
-    nameElement.value = "";
+    firstNameElement.value = "";
     emailElement.value = "";
-    phoneElement.value = "";
+    lastNameElement.value = "";
     commentElement.value = "";
 }
 
